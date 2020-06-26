@@ -51,17 +51,17 @@ stages:
       inputs:
         codeCoverageTool: cobertura
         summaryFileLocation: '**/*.cobertura.xml'
-    - publish: './Artifacts'
-      artifact: 'publish'
-      displayName: 'Publish Artifacts'
+    - publish: './Artefacts'
+      artefact: 'publish'
+      displayName: 'Publish Artefacts'
 - stage: Deploy
   jobs:
-  - deployment: AzureArtifacts
-    displayName: 'Azure Artifacts'
+  - deployment: AzureArtefacts
+    displayName: 'Azure Artefacts'
     condition: ne(variables['Build.Reason'], 'PullRequest')
     pool:
       vmImage: windows-latest
-    environment: 'Azure Artifacts'
+    environment: 'Azure Artefacts'
     strategy:
       runOnce:
         deploy:
@@ -70,7 +70,7 @@ stages:
             displayName: 'NuGet Install'
           - task: NuGetAuthenticate@0
             displayName: 'NuGet Authenticate'
-          - pwsh: nuget push $(Agent.BuildDirectory)/publish/*.nupkg -Source $(AzureArtifactsSource) -ApiKey AzureArtifacts -SkipDuplicate
+          - pwsh: nuget push $(Agent.BuildDirectory)/publish/*.nupkg -Source $(AzureArtefactsSource) -ApiKey AzureArtefacts -SkipDuplicate
             displayName: 'NuGet Push'
             failOnStderr: true
   - deployment: NuGet
