@@ -52,7 +52,7 @@ stages:
         codeCoverageTool: cobertura
         summaryFileLocation: '**/*.cobertura.xml'
     - publish: './Artefacts'
-      artefact: 'publish'
+      artifact: 'publish'
       displayName: 'Publish Artefacts'
 - stage: Deploy
   jobs:
