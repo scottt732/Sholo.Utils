@@ -20,19 +20,7 @@ stages:
 - stage: Build
   jobs:
   - job: Build
-    strategy:
-      matrix:
-        Linux:
-          matrixName: Ubuntu
-          vmImageName: ubuntu-latest
-        Mac:
-          matrixName: Mac
-          vmImageName: macos-latest
-        Windows:
-          matrixName: Windows
-          vmImageName: windows-latest
-    pool:
-      vmImage: $(vmImageName)
+    pool: 'Eleven Rose'
     timeoutInMinutes: 10
     steps:
     - checkout: self
@@ -63,20 +51,17 @@ stages:
       inputs:
         codeCoverageTool: cobertura
         summaryFileLocation: '**/*.cobertura.xml'
-    - publish: './Artefacts'
-      artifact: $(matrixName)
-      displayName: 'Publish Artefacts'
+    - publish: './Artifacts'
+      artifact: 'publish'
+      displayName: 'Publish Artifacts'
 - stage: Deploy
   jobs:
-  # Deploy to Azure Artefacts
-  # You need to enable access to publish to Azure Artefacts and also set-up the following variables in Azure Pipelines:
-  # - AzureArtefactsSource - https://pkgs.dev.azure.com/<Organisation Name>/_packaging/<Project Name>/nuget/v3/index.json
-  - deployment: AzureArtefacts
-    displayName: 'Azure Artefacts'
+  - deployment: AzureArtifacts
+    displayName: 'Azure Artifacts'
     condition: ne(variables['Build.Reason'], 'PullRequest')
     pool:
       vmImage: windows-latest
-    environment: 'Azure Artefacts'
+    environment: 'Azure Artifacts'
     strategy:
       runOnce:
         deploy:
@@ -85,33 +70,9 @@ stages:
             displayName: 'NuGet Install'
           - task: NuGetAuthenticate@0
             displayName: 'NuGet Authenticate'
-          - pwsh: nuget push $(Agent.BuildDirectory)\Windows\*.nupkg -Source $(AzureArtefactsSource) -ApiKey AzureArtifacts -SkipDuplicate
+          - pwsh: nuget push $(Agent.BuildDirectory)/publish/*.nupkg -Source $(AzureArtifactsSource) -ApiKey AzureArtifacts -SkipDuplicate
             displayName: 'NuGet Push'
             failOnStderr: true
-  # Deploy to GitHub Packages
-  # You need to set-up the following variables in Azure Pipelines:
-  # - GitHubPersonalAccessToken - Get this from your account at https://github.com.
-  - deployment: GitHub
-    condition: ne(variables['Build.Reason'], 'PullRequest')
-    pool:
-      vmImage: windows-latest
-    environment: 'GitHub'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: NuGetToolInstaller@1
-            displayName: 'NuGet Install'
-          - pwsh: nuget source Add -Name GitHub -Source https://nuget.pkg.github.com/scottt732 -UserName scottt732 -Password $(GitHubPersonalAccessToken)
-            displayName: 'NuGet Add Source'
-            failOnStderr: true
-          - pwsh: nuget push $(Agent.BuildDirectory)\Windows\*.nupkg -Source GitHub -SkipDuplicate
-            displayName: 'NuGet Push'
-            failOnStderr: true
-  # Deploy to NuGet
-  # This only occurs when you push a tag to your Git repository
-  # You need to set-up the following variables in Azure Pipelines:
-  # - NuGetApiKey - Get this from your account at https://nuget.org.
   - deployment: NuGet
     condition: and(ne(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.sourceBranch'], 'refs/tags/'))
     pool:
