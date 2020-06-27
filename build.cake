@@ -4,7 +4,7 @@ var configuration =
     EnvironmentVariable("Configuration") is object ? EnvironmentVariable("Configuration") :
     "Release";
 
-var artefactsDirectory = Directory("./Artefacts");
+var artifactsDirectory = Directory("./Artifacts");
 
 Task("Clean")
     .Description("Cleans the artefacts, bin and obj directories.")
@@ -38,7 +38,7 @@ Task("Build")
     });
 
 Task("Test")
-    .Description("Runs unit tests and outputs test results to the artefacts directory.")
+    .Description("Runs unit tests and outputs test results to the artifacts directory.")
     .DoesForEach(GetFiles("./Tests/**/*.csproj"), project =>
     {
         DotNetCoreTest(
@@ -49,7 +49,7 @@ Task("Test")
                 Logger = $"trx;LogFileName={project.GetFilenameWithoutExtension()}.trx",
                 NoBuild = true,
                 NoRestore = true,
-                ResultsDirectory = artefactsDirectory,
+                ResultsDirectory = artifactsDirectory,
                 ArgumentCustomization = x => x
                     .Append("--blame")
                     .AppendSwitch("--logger", $"html;LogFileName={project.GetFilenameWithoutExtension()}.html")
@@ -58,7 +58,7 @@ Task("Test")
     });
 
 Task("Pack")
-    .Description("Creates NuGet packages and outputs them to the artefacts directory.")
+    .Description("Creates NuGet packages and outputs them to the artifacts directory.")
     .Does(() =>
     {
         DotNetCorePack(
@@ -70,7 +70,7 @@ Task("Pack")
                 MSBuildSettings = new DotNetCoreMSBuildSettings().WithProperty("SymbolPackageFormat", "snupkg"),
                 NoBuild = true,
                 NoRestore = true,
-                OutputDirectory = artefactsDirectory,
+                OutputDirectory = artifactsDirectory,
             });
     });
 
