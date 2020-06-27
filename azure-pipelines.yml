@@ -59,8 +59,7 @@ stages:
   - deployment: AzureArtefacts
     displayName: 'Azure Artefacts'
     condition: ne(variables['Build.Reason'], 'PullRequest')
-    pool:
-      vmImage: windows-latest
+    pool: 'Eleven Rose'
     environment: 'Azure Artefacts'
     strategy:
       runOnce:
@@ -75,8 +74,7 @@ stages:
             failOnStderr: true
   - deployment: NuGet
     condition: and(ne(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.sourceBranch'], 'refs/tags/'))
-    pool:
-      vmImage: windows-latest
+    pool: 'Eleven Rose'
     environment: 'NuGet'
     strategy:
       runOnce:
@@ -85,7 +83,7 @@ stages:
           - task: NuGetToolInstaller@1
             displayName: 'Install NuGet'
           - pwsh: |
-              Get-ChildItem $(Agent.BuildDirectory)\Windows -Filter *.nupkg |
+              Get-ChildItem $(Agent.BuildDirectory)\publish -Filter *.nupkg |
               Where-Object { !$_.Name.Contains('preview') } |
               ForEach-Object { nuget push $_ -Source https://api.nuget.org/v3/index.json -ApiKey $(NuGetApiKey) -SkipDuplicate }
             displayName: 'NuGet Push'
