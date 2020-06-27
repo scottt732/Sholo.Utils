@@ -75,7 +75,7 @@ stages:
             displayName: 'NuGet Install'
           - task: NuGetAuthenticate@0
             displayName: 'NuGet Authenticate'
-          - pwsh: nuget push $(Agent.BuildDirectory)/publish/*.nupkg -Source $(AzureArtefactsSource) -ApiKey AzureArtefacts -SkipDuplicate
+          - pwsh: dotnet nuget push $(Agent.BuildDirectory)/publish/*.nupkg -Source $(AzureArtefactsSource) -ApiKey AzureArtefacts -SkipDuplicate
             displayName: 'NuGet Push'
             failOnStderr: true
   - deployment: NuGet
@@ -93,6 +93,6 @@ stages:
           - pwsh: |
               Get-ChildItem $(Agent.BuildDirectory)\publish -Filter *.nupkg |
               Where-Object { !$_.Name.Contains('preview') } |
-              ForEach-Object { nuget push $_ -Source https://api.nuget.org/v3/index.json -ApiKey $(NuGetApiKey) -SkipDuplicate }
+              ForEach-Object { dotnet nuget push $_ -Source https://api.nuget.org/v3/index.json -ApiKey $(NuGetApiKey) -SkipDuplicate }
             displayName: 'NuGet Push'
             failOnStderr: true
