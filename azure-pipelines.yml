@@ -15,6 +15,7 @@ variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   # Set the build number in MinVer
   MINVERBUILDMETADATA: build.$(Build.BuildId)
+  
 
 stages:
 - stage: Build
@@ -56,11 +57,16 @@ stages:
       displayName: 'Publish Artefacts'
 - stage: Deploy
   jobs:
+  # Deploy to Azure Artefacts
+  # You need to enable access to publish to Azure Artefacts and also set-up the following variables in Azure Pipelines:
+  # - AzureArtefactsSource - https://pkgs.dev.azure.com/<Organisation Name>/_packaging/<Project Name>/nuget/v3/index.json
   - deployment: AzureArtefacts
     displayName: 'Azure Artefacts'
     condition: ne(variables['Build.Reason'], 'PullRequest')
     pool: 'Eleven Rose'
     environment: 'Azure Artefacts'
+    variables:
+      - group: Sholo Github
     strategy:
       runOnce:
         deploy:
@@ -76,6 +82,8 @@ stages:
     condition: and(ne(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.sourceBranch'], 'refs/tags/'))
     pool: 'Eleven Rose'
     environment: 'NuGet'
+    variables:
+      - group: Sholo Github
     strategy:
       runOnce:
         deploy:
