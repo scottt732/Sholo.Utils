@@ -16,7 +16,6 @@ stages:
   jobs:
   - job: Build
     pool: $(BuildPool)
-    environment: 'Build'
     timeoutInMinutes: 10
     steps:
     - checkout: self
@@ -73,6 +72,7 @@ stages:
   - deployment: NuGet
     condition: and(ne(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.sourceBranch'], 'refs/tags/'))
     pool: $(BuildPool)
+    environment: 'Build'
     variables:
       - group: Sholo Github
       - group: Sholo NuGet
