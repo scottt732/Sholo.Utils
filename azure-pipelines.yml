@@ -84,6 +84,6 @@ stages:
           - pwsh: |
               Get-ChildItem $(Agent.BuildDirectory)\publish -Filter *.nupkg |
               Where-Object { !$_.Name.Contains('preview') } |
-              ForEach-Object { dotnet nuget push $_ -Source https://api.nuget.org/v3/index.json -ApiKey $(NuGetApiKey) -SkipDuplicate }
+              ForEach-Object { dotnet nuget push $_ --source https://api.nuget.org/v3/index.json --api-key $(NuGetApiKey) --skip-duplicate }
             displayName: 'NuGet Push'
             failOnStderr: true
