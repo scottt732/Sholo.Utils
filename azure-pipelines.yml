@@ -57,9 +57,6 @@ stages:
       displayName: 'Publish Artefacts'
 - stage: Deploy
   jobs:
-  # Deploy to Azure Artefacts
-  # You need to enable access to publish to Azure Artefacts and also set-up the following variables in Azure Pipelines:
-  # - AzureArtefactsSource - https://pkgs.dev.azure.com/<Organisation Name>/_packaging/<Project Name>/nuget/v3/index.json
   - deployment: AzureArtefacts
     displayName: 'Azure Artefacts'
     condition: ne(variables['Build.Reason'], 'PullRequest')
