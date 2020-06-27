@@ -57,7 +57,7 @@ stages:
     pool: $(BuildPool)
     environment: 'Build'
     variables:
-      - group: Sholo Github
+      - group: Sholo Azure Artifacts
     strategy:
       runOnce:
         deploy:
@@ -74,7 +74,6 @@ stages:
     pool: $(BuildPool)
     environment: 'Build'
     variables:
-      - group: Sholo Github
       - group: Sholo NuGet
     strategy:
       runOnce:
