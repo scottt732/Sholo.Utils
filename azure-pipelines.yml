@@ -21,7 +21,7 @@ stages:
 - stage: Build
   jobs:
   - job: Build
-    pool: 'Eleven Rose'
+    pool: $(BuildPool)
     timeoutInMinutes: 10
     steps:
     - checkout: self
@@ -60,7 +60,7 @@ stages:
   - deployment: AzureArtefacts
     displayName: 'Azure Artefacts'
     condition: ne(variables['Build.Reason'], 'PullRequest')
-    pool: 'Eleven Rose'
+    pool: $(BuildPool)
     environment: 'Azure Artefacts'
     variables:
       - group: Sholo Github
@@ -77,7 +77,7 @@ stages:
             failOnStderr: true
   - deployment: NuGet
     condition: and(ne(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.sourceBranch'], 'refs/tags/'))
-    pool: 'Eleven Rose'
+    pool: $(BuildPool)
     environment: 'NuGet'
     variables:
       - group: Sholo Github
