@@ -7,10 +7,10 @@ var configuration =
 var artifactsDirectory = Directory("./Artifacts");
 
 Task("Clean")
-    .Description("Cleans the artefacts, bin and obj directories.")
+    .Description("Cleans the artifacts, bin and obj directories.")
     .Does(() =>
     {
-        CleanDirectory(artefactsDirectory);
+        CleanDirectory(artifactsDirectory);
         DeleteDirectories(GetDirectories("**/bin"), new DeleteDirectorySettings() { Force = true, Recursive = true });
         DeleteDirectories(GetDirectories("**/obj"), new DeleteDirectorySettings() { Force = true, Recursive = true });
     });
