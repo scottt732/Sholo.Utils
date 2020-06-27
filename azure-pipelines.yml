@@ -1,5 +1,3 @@
-# Azure Pipelines documentation https://aka.ms/yaml
-
 trigger:
   branches:
     include:
@@ -9,13 +7,9 @@ trigger:
     - '*'
 
 variables:
-  # Set the DOTNET_SKIP_FIRST_TIME_EXPERIENCE environment variable to stop wasting time caching packages
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-  # Disable sending usage data to Microsoft
   DOTNET_CLI_TELEMETRY_OPTOUT: true
-  # Set the build number in MinVer
   MINVERBUILDMETADATA: build.$(Build.BuildId)
-  
 
 stages:
 - stage: Build
@@ -52,16 +46,16 @@ stages:
       inputs:
         codeCoverageTool: cobertura
         summaryFileLocation: '**/*.cobertura.xml'
-    - publish: './Artefacts'
+    - publish: './Artifacts'
       artifact: 'publish'
-      displayName: 'Publish Artefacts'
+      displayName: 'Publish Artifacts'
 - stage: Deploy
   jobs:
-  - deployment: AzureArtefacts
-    displayName: 'Azure Artefacts'
+  - deployment: AzureArtifacts
+    displayName: 'Azure Artifacts'
     condition: ne(variables['Build.Reason'], 'PullRequest')
     pool: $(BuildPool)
-    environment: 'Azure Artefacts'
+    environment: 'Build'
     variables:
       - group: Sholo Github
     strategy:
@@ -72,15 +66,16 @@ stages:
             displayName: 'NuGet Install'
           - task: NuGetAuthenticate@0
             displayName: 'NuGet Authenticate'
-          - pwsh: dotnet nuget push $(Agent.BuildDirectory)/publish/*.nupkg --source $(AzureArtefactsSource) --api-key AzureArtefacts --skip-duplicate
+          - pwsh: dotnet nuget push $(Agent.BuildDirectory)/publish/*.nupkg --source $(AzureArtifactsSource) --api-key AzureArtifacts --skip-duplicate
             displayName: 'NuGet Push'
             failOnStderr: true
   - deployment: NuGet
     condition: and(ne(variables['Build.Reason'], 'PullRequest'), startsWith(variables['Build.sourceBranch'], 'refs/tags/'))
     pool: $(BuildPool)
-    environment: 'NuGet'
+    environment: 'Build'
     variables:
       - group: Sholo Github
+      - group: Sholo NuGet
     strategy:
       runOnce:
         deploy:
