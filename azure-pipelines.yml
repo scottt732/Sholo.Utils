@@ -75,7 +75,7 @@ stages:
             displayName: 'NuGet Install'
           - task: NuGetAuthenticate@0
             displayName: 'NuGet Authenticate'
-          - pwsh: dotnet nuget push $(Agent.BuildDirectory)/publish/*.nupkg -Source $(AzureArtefactsSource) -ApiKey AzureArtefacts -SkipDuplicate
+          - pwsh: dotnet nuget push $(Agent.BuildDirectory)/publish/*.nupkg --source $(AzureArtefactsSource) --api-key AzureArtefacts --skip-duplicate
             displayName: 'NuGet Push'
             failOnStderr: true
   - deployment: NuGet
