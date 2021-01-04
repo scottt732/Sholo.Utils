@@ -1,11 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Build">
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\..\Source\Sholo.Utils\Sholo.Utils.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Moq" Version="4.15.2" />
   </ItemGroup>
 
 </Project>
